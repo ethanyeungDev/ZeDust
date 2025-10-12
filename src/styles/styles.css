@@ -1,0 +1,68 @@
+/*Vaguely Fallout New Vegas style colour palette.*/
+:root{
+   --f_blue:	#2ecfff;
+   --light_amber:#f5deb3;
+   --f_amber:#ffa500;
+   --f_green:#1bff80;
+   --f_white:	#c0ffff;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap');
+
+.header{
+  background-color: var(--light_amber);
+}
+
+html{
+     font-family: "Cinzel", serif;
+   
+}
+
+/* source for typing animation: https://css-tricks.com/snippets/css/typewriter-effect/ */
+
+/* Google Fonts */
+
+body {
+  /* background: #333; */
+  border: none;
+  padding-top: 40vh;
+  display: flex;
+  justify-content: center;
+}
+
+#gameBox{
+  display: none;
+}
+
+/* DEMO-SPECIFIC STYLES */
+.typewriter p {
+
+  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  border-right: .15em solid orange; /* The typwriter cursor */
+  white-space: nowrap; /* Keeps the content on a single line */
+  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+  letter-spacing: .15em; /* Adjust as needed */
+  animation: 
+    typing 3.5s steps(40, end),
+    blink-caret .75s step-end infinite;
+  font-size: 15vh;
+}
+.borderBox{
+    background-color: #e2e2df;
+    background-blend-mode:difference;
+    border: #000000;
+    border-style: solid;
+    border-width: 0.2rem;
+}
+
+/* The typing effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--f_amber) }
+}

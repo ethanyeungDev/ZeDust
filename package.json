@@ -1,0 +1,23 @@
+{
+  "name": "zedustrepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethanyeungDev/ZeDust.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ethanyeungDev/ZeDust/issues"
+  },
+  "homepage": "https://github.com/ethanyeungDev/ZeDust#readme",
+  "dependencies": {
+    "honeycomb-grid": "^4.1.5"
+  }
+}
