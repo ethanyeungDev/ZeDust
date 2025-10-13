@@ -30,11 +30,14 @@ body {
   justify-content: center;
 }
 
+ul{
+  list-style: none;
+}
+
 #gameBox{
   display: none;
 }
 
-/* DEMO-SPECIFIC STYLES */
 .typewriter p {
 
   overflow: hidden; /* Ensures the content is not revealed until the animation */
@@ -52,7 +55,66 @@ body {
     background-blend-mode:difference;
     border: #000000;
     border-style: solid;
-    border-width: 0.2rem;
+    border-width: 0.5vw;
+}
+
+#choiceBoxHeader {
+  padding: 3vh;
+  cursor: move;
+  z-index: 10;
+  background-color: #2196F3;
+  color: #fff;
+}
+
+#choiceBox {
+  position: absolute;
+  z-index: 9;
+  background-color: #e43939;
+  border: 0.3vw solid #d3d3d3;
+  text-align: center;
+}
+
+#choiceBoxList{
+  display: flex;
+  flex-direction: column;
+  padding: 0 0;
+  margin: 0 0;
+}
+
+#choiceBoxList>li{
+  
+}
+
+
+
+
+
+/* add something to force the top ticker to be sticky at the top. */
+.topTicker-container {
+  width: 100%; /* Or a specific width */
+  overflow: hidden; /* Hides content outside the container */
+  white-space: nowrap; /* Prevents text from wrapping */
+  position: relative; /* Needed for positioning child elements */
+  height: 50px; /* Or desired height */
+}
+
+/* instead of a modern stock ticker it would be nice to have the text appear character by character like a typewriter */
+
+.topTicker-content{
+  display: inline-block; /* Allows content to be treated as a single line */
+  position: absolute; /* Positions content relative to the container */
+  animation: scroll-left 30s linear infinite; /* Animation properties */
+}
+
+.topTicker-content p {
+  display: inline-block; /* Ensures paragraphs stay in line */
+  margin: 0; /* Remove default paragraph margins */
+  padding-right: 20px; /* Adjust spacing between repeated text */
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(100%); } /* Starts off-screen to the right */
+  100% { transform: translateX(-100%); } /* Moves completely off-screen to the left */
 }
 
 /* The typing effect */
@@ -66,3 +128,17 @@ body {
   from, to { border-color: transparent }
   50% { border-color: var(--f_amber) }
 }
+
+
+#resourceChart{
+  display: none;
+}
+
+#resourceChart.defaultPos{
+  display: absolute;
+  top:0;
+  left:0;
+  background-color: lightblue;
+}
+
+
