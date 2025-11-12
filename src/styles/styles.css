@@ -25,7 +25,6 @@ html{
 body {
   /* background: #333; */
   border: none;
-  padding-top: 40vh;
   display: flex;
   justify-content: center;
 }
@@ -34,8 +33,22 @@ ul{
   list-style: none;
 }
 
+#loadingBox{
+  position: relative;
+  top: 40vh;
+}
+
 #gameBox{
   display: none;
+}
+
+#gameBox.default{
+  display:flex;
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-color: #1a1a1a;
+  overflow: hidden;
 }
 
 .typewriter p {
@@ -134,11 +147,46 @@ ul{
   display: none;
 }
 
+#chartHeader {
+  cursor: move;
+  background-color: #2c3e50;
+  color: white;
+  padding: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  font-weight: bold;
+  user-select: none;
+}
+
 #resourceChart.defaultPos{
-  display: absolute;
+  display: block;
   top:0;
   left:0;
+  width:100%;
+  height: calc(100% - 36px);
   background-color: lightblue;
 }
 
+#resourceChartHeader {
+  cursor: move;
+  background-color: #2c3e50;
+  color: white;
+  padding: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  font-weight: bold;
+  user-select: none;
+}
 
+#resourceChartBox {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 350px;
+  height: 250px;
+  background-color: #fff;
+  border: 2px solid #444;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  z-index: 20;
+}

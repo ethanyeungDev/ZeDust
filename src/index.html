@@ -19,32 +19,33 @@
   
 
     <div id="loadingBox">
-   
-
-    <div class="typewriter">
-      <p> Loading </p>
+      <div class="typewriter">
+        <p> Loading </p>
+      </div>
     </div>
-  </div>
 
-  <div id="gameBox">
+    <div id="gameBox">
 
-    
-   <div class="topTicker-container">
-      <canvas id="resourceChart" style="width:100%;max-width:700px"></canvas>
-  
-    <!-- <h1>hello world</h1> -->
-    <div class="topTicker-content">
-          <p>Default top ticker text. You should not be seeing this.</p>/p>
-          <p>Default top ticker text. You should not be seeing this.</p>
+      
+    <div class="topTicker-container">
+      <div id="resourceChartBox" class="dragBox">
+        <div id="resourceChartHeader" class="dragHeader">Resource Chart</div>
+        <canvas id="resourceChart"></canvas>
+      </div>
+      <!-- <h1>hello world</h1> -->
+      <div class="topTicker-content">
+            <p>Default top ticker text. You should not be seeing this.</p>/p>
+            <p>Default top ticker text. You should not be seeing this.</p>
+          </div>
         </div>
-      </div>
-      <div id="choiceBox">
-      <!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
-          <div id="choiceBoxHeader">Click here to move</div>
-            <ul id="choiceBoxList">
+        <div id="choiceBox" class="dragBox">
+        <!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
+            <div id="choiceBoxHeader" class="dragHeader">Click here to move</div>
+              <ul id="choiceBoxList">
 
-            </ul>
-      </div>
+              </ul>
+        </div>
+    </div>
   </div>
 </body>
 </html>

@@ -66,5 +66,18 @@ function runIntro(){
 
 function runStageOne(){
     resourceChart.classList.add('defaultPos')
-    resourceChart.update();
+    // resourceChart.update();
 }
+
+
+
+
+function runStageTwo()
+{
+    
+}
+//Apotheosis - Before the Fall, there was no darkness in coffins. 
+
+//Darkness is a sensation experienced by a sapient being. Only minds with eyes can experience darkness - the glass stillness of unrevived bodies see nothing. The self-proclaimed Apotheosis speak of the transcendence of unlife over life, claiming the erasure of both life and death. But we say that life in the necromundae has not been extinguished, merely transformed. New cages cannot elevate a damaged spirit. 
+// 
+//The Apotheotic kill for words like these. Let them. 

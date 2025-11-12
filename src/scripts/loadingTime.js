@@ -1,4 +1,4 @@
-const devmode=true;
+const devmode=false;
 
 if(devmode){
   document.querySelector("#loadingBox").style.display = "none";
@@ -8,7 +8,7 @@ else{
     document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
         document.querySelector("#loadingBox").style.display = "none";
-        document.querySelector("#gameBox").style.display = "flex";
+        document.querySelector("#gameBox").classList.add("default");
     }, 5000);
     });
 }
