@@ -21,10 +21,7 @@ export const cities = [
     buildings: [
       { template: "Salvage Site", count: 1, mothballed: false, beingBuilt: false },
    ]
-  },
-    {
-    name: "Marcanos Post",
-    buildings: [
-   ]
   }
+
+
 ];

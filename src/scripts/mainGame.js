@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
   renderSidebar();
   wireNextTurnModal();
   updateAllCityCharts();
-    renderCityPanels();
 });
 
 
@@ -109,7 +108,6 @@ runStageOne();
 
 // Introduction scene
 
-console.log("Projected:", projectedNextTurnValues());
 
 function runIntro(){
 
