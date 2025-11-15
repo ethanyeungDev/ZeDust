@@ -1,165 +1,126 @@
-// ui/cityPanel.js
-import { buildingMap } from '../campaign/buildings.js';
+import { buildingsList, buildingMap } from '../campaign/buildings.js';
 import { startConstructionInCity } from '../mainGame.js';
+import { valueClassFor, applyValueClass } from './colors.js';
 
 /**
- * Compute per-building deltas, accounting for mothballed status
+ * Calculate deltas for a single building
  */
 function calculateBuildingDeltas(building) {
-  const template = buildingMap[building.template];
-  if (!template || !template.output) return {};
+  const tpl = buildingMap[building.template];
+  if (!tpl || !tpl.deltas) return {};
   const deltas = {};
-  for (const [res, val] of Object.entries(template.output)) {
-    deltas[res] = building.mothballed ? 0 : val;
+  for (const [res, val] of Object.entries(tpl.deltas)) {
+    deltas[res] = val * building.count;
   }
   return deltas;
 }
 
 /**
- * Compute summed deltas for the city
+ * Create a city panel element
  */
-function calculateCityTotals(city) {
-  const totals = {};
-  city.buildings.forEach(b => {
-    const deltas = calculateBuildingDeltas(b);
-    for (const [res, val] of Object.entries(deltas)) {
-      totals[res] = (totals[res] || 0) + val * b.count;
-    }
-  });
-  return totals;
-}
-
-/**
- * Render a single city panel
- */
-export function createCityPanel(city, index) {
+export function createCityPanel(city, cityIndex) {
   const panel = document.createElement('div');
   panel.className = 'city-panel';
-  panel.style.background = '#1b1b2f';
+  panel.style.display = 'flex';
+  panel.style.flexDirection = 'column';
+  panel.style.padding = '0.5rem';
+  panel.style.margin = '0.25rem';
+  panel.style.background = '#1a1a1a';
   panel.style.color = 'white';
-  panel.style.padding = '0.75rem';
-  panel.style.borderRadius = '8px';
-  panel.style.flex = '0 0 auto';
-  panel.style.minWidth = '300px';
+  panel.style.border = '1px solid #333';
+  panel.style.borderRadius = '4px';
+  panel.style.minWidth = '250px';
 
-  // --- HEADER ---
+  // Header
   const header = document.createElement('div');
   header.className = 'city-header';
-  header.innerHTML = `<h3 style="margin:0; text-align:center;">${city.name}</h3>`;
+  header.innerHTML = `<h3 style="margin:0 0 0.5rem 0;">${city.name}</h3>`;
   panel.appendChild(header);
 
-  // --- TABLE FOR BUILDINGS AND DELTAS ---
+  // Table for buildings + deltas
   const table = document.createElement('table');
   table.style.width = '100%';
   table.style.borderCollapse = 'collapse';
-  table.style.marginTop = '0.5rem';
-
+  table.style.fontFamily = 'monospace';
   const thead = document.createElement('thead');
-  thead.innerHTML = `
-    <tr style="border-bottom:1px solid #444;">
-      <th style="text-align:left; padding:0.25rem;">Building</th>
-      <th style="text-align:left; padding:0.25rem;">Deltas</th>
-      <th style="padding:0.25rem;">Mothballed</th>
-    </tr>
-  `;
+  thead.innerHTML = `<tr>
+      <th style="text-align:left;">Building</th>
+      <th>Deltas</th>
+      <th>Mothballed</th>
+    </tr>`;
   table.appendChild(thead);
 
   const tbody = document.createElement('tbody');
-city.buildings.forEach((b, i) => {
-  const deltas = calculateBuildingDeltas(b);
-  const tr = document.createElement('tr');
 
-  // --- Building name ---
-  const tdName = document.createElement('td');
-  tdName.textContent = `${b.template} × ${b.count}`;
-  tdName.style.padding = '0.25rem';
-  tr.appendChild(tdName);
+  city.buildings.forEach((b, i) => {
+    const tr = document.createElement('tr');
 
-  // --- Deltas ---
-  const tdDeltas = document.createElement('td');
-  tdDeltas.style.padding = '0.25rem';
-  tdDeltas.style.fontFamily = 'monospace';
-  tdDeltas.textContent = Object.entries(deltas)
-    .map(([res, val]) => `${res}: ${b.mothballed ? 0 : (val >= 0 ? '+' : '') + val}`)
-    .join(' | ');
-  tr.appendChild(tdDeltas);
+    // Building name
+    const tdName = document.createElement('td');
+    tdName.textContent = `${b.template} × ${b.count}`;
+    tdName.style.padding = '0.25rem';
+    tr.appendChild(tdName);
 
-  // --- Mothballed indicator (color + Y/N) ---
-  const tdMoth = document.createElement('td');
-  tdMoth.style.padding = '0.25rem';
-  tdMoth.style.fontWeight = 'bold';
-  tdMoth.style.textAlign = 'center';
-  tdMoth.style.cursor = 'pointer';
+    // Building deltas
+    const tdDeltas = document.createElement('td');
+    tdDeltas.style.padding = '0.25rem';
+    const deltas = calculateBuildingDeltas(b);
+    tdDeltas.textContent = Object.entries(deltas)
+      .map(([res, val]) => `${res}: ${val >= 0 ? '+' : ''}${val}`)
+      .join(' | ');
+    tr.appendChild(tdDeltas);
 
-  function updateMothCell() {
-    tdMoth.textContent = b.mothballed ? 'Y' : 'N';
-    tdMoth.style.color = b.mothballed ? 'red' : 'green';
-  }
+    // Mothballed indicator
+    const tdMoth = document.createElement('td');
+    tdMoth.style.padding = '0.25rem';
+    const mothBox = document.createElement('div');
+    mothBox.style.width = '1.5rem';
+    mothBox.style.height = '1.5rem';
+    mothBox.style.display = 'flex';
+    mothBox.style.alignItems = 'center';
+    mothBox.style.justifyContent = 'center';
+    mothBox.style.borderRadius = '2px';
+    mothBox.style.cursor = 'pointer';
+    mothBox.style.color = 'white';
+    mothBox.style.fontWeight = 'bold';
+    function updateMothBox() {
+      mothBox.style.background = b.mothballed ? 'red' : 'green';
+      mothBox.textContent = b.mothballed ? 'Y' : 'N';
+    }
+    updateMothBox();
 
-  updateMothCell();
+    mothBox.addEventListener('click', () => {
+      b.mothballed = !b.mothballed;
+      updateMothBox();
+    });
 
-  tdMoth.addEventListener('click', () => {
-    b.mothballed = !b.mothballed;
-    updateMothCell();
-    // optionally re-render sidebar to update all deltas
+    tdMoth.appendChild(mothBox);
+    tr.appendChild(tdMoth);
+
+    tbody.appendChild(tr);
   });
-
-  tr.appendChild(tdMoth);
-
-  tbody.appendChild(tr);
-});
-
-
-  // --- TOTAL ROW ---
-  const totalRow = document.createElement('tr');
-  totalRow.style.borderTop = '1px solid #888';
-  const totals = calculateCityTotals(city);
-
-  const tdLabel = document.createElement('td');
-  tdLabel.textContent = 'Total';
-  tdLabel.style.fontWeight = 'bold';
-  tdLabel.style.padding = '0.25rem';
-  totalRow.appendChild(tdLabel);
-
-  const tdTotals = document.createElement('td');
-  tdTotals.style.padding = '0.25rem';
-  tdTotals.style.fontFamily = 'monospace';
-  tdTotals.style.fontWeight = 'bold';
-  tdTotals.textContent = Object.entries(totals)
-    .map(([res, val]) => `${res}: ${val >= 0 ? '+' : ''}${val}`)
-    .join(' | ');
-  totalRow.appendChild(tdTotals);
-
-  // Empty cell for mothballed column
-  const tdEmpty = document.createElement('td');
-  tdEmpty.textContent = '';
-  totalRow.appendChild(tdEmpty);
-
-  tbody.appendChild(totalRow);
 
   table.appendChild(tbody);
   panel.appendChild(table);
 
-  // --- CONSTRUCTION DROPDOWN ---
+  // Construction dropdown
   const dropdown = document.createElement('select');
-  dropdown.style.marginTop = '0.5rem';
   const placeholder = document.createElement('option');
   placeholder.textContent = 'Construct new building...';
   placeholder.disabled = true;
   placeholder.selected = true;
   dropdown.appendChild(placeholder);
 
-  Object.values(buildingMap).forEach(building => {
+  buildingsList.forEach(building => {
     const opt = document.createElement('option');
     opt.value = building.name;
     opt.textContent = building.name;
     dropdown.appendChild(opt);
   });
 
-  dropdown.addEventListener('change', e => {
-    const buildingName = e.target.value;
-    startConstructionInCity(index, buildingName);
-    e.target.selectedIndex = 0;
+  dropdown.addEventListener('change', (e) => {
+    startConstructionInCity(cityIndex, e.target.value);
+    e.target.selectedIndex = 0; // reset
   });
 
   panel.appendChild(dropdown);

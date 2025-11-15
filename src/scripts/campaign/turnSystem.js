@@ -1,227 +1,60 @@
 // systems/turnSystem.js
 import { buildingsList } from "./buildings.js";
-import { resources, applyResourceDelta, zeroDelta } from "./resources.js";
+import { resources } from "./resources.js";
 import { cities } from "./cities.js";
 
-export function simulateTurn() {
-  const starving = [];
-  const next = {}; // projected next-turn values
-
-  // --- STEP 0: Reset all deltas ---
-  for (const key in resources) {
-    resources[key].delta = 0;
-  }
-
-  // --- STEP 1: Apply buildings production/maintenance ---
-  for (const city of cities) {
-    for (const b of city.buildings) {
-      if (b.beingBuilt) {
-        b.beingBuilt = false; // construction completes this turn
-        continue;
-      }
-
-      if (b.mothballed) continue;
-
-      const tpl = buildingsList[b.template];
-
-      for (const r in tpl.deltas) {
-        if (r in resources) {
-          resources[r].delta += tpl.deltas[r] * b.count;
-        }
-      }
-    }
-  }
-
-  // --- STEP 2: Compute projected next-turn values ---
-  for (const key in resources) {
-    next[key] = resources[key].initial + resources[key].delta;
-  }
-
-  // --- STEP 3: Auto-mothball to prevent negatives ---
-  for (const key in next) {
-    if (next[key] >= 0) continue;
-
-    starving.push(key);
-
-    // Your existing helper function
-    autoMothballBuildingsAffecting(key, resources);
-
-    // Recalculate after mothballing
-    next[key] = resources[key].initial + resources[key].delta;
-
-    // Clamp if still negative
-    if (next[key] < 0) {
-      resources[key].delta = -resources[key].initial;
-      next[key] = 0;
-    }
-  }
-
-  // --- STEP 4: Apply deltas to final values ---
-  for (const key in resources) {
-    resources[key].final = resources[key].initial + resources[key].delta;
-  }
-
-  // --- STEP 5: Warnings ---
-  for (const key of starving) {
-    if (resources[key].final === 0) warnResourceZero(key);
-  }
-
-  // --- STEP 6: Update Charts ---
-  updateCharts();
-  updateAllCityCharts();
-}
-
-function autoMothballBuildingsAffecting(resourceKey, turnDelta, next) {
-  // Find all buildings with negative effect on resource
-  const offenders = [];
-
-  for (const city of cities) {
-    for (const b of city.buildings) {
-      if (b.mothballed) continue;
-
-      const tpl = buildingsList[b.template];
-      const rate = tpl.deltas[resourceKey];
-
-      if (rate < 0) {
-        offenders.push({ city, b, rate });
-      }
-    }
-  }
-
-  // Largest (most negative) consumers first
-  offenders.sort((a, b) => a.rate - b.rate);
-
-  for (const { b, rate } of offenders) {
-    if (next[resourceKey] >= 0) return; // fixed
-
-    // Mothball
-    b.mothballed = true;
-
-    // Remove their consumption from turnDelta
-    turnDelta[resourceKey] -= rate * b.count;
-
-    // Recalculate projected
-    next[resourceKey] = resources[resourceKey] + turnDelta[resourceKey];
-  }
-}
-
-
-export function projectedNextTurnValues() {
-  const deltas = computeGlobalDeltas();
-  const next = {};
-
-  for (const key in resources) {
-    next[key] = resources[key] + deltas[key];
-  }
-
-  return next;
-}
-//Strategic functions
-
-//I am perfectly aware that the clean way to do this is to have my code in separate modules and import them into the master file. Ideally I would have a separate strategicLib and a UILib. However that wasn't in our notes and I don't have enough time to learn how to do that.
-
-//past me was a fool for thinking the above
-// cityLogic.js
-
-
-// --- Helpers ---
-
-export function getBuildingTemplate(name) {
-  return buildingsList.find(b => b.name === name);
-}
-
-//I don't think I need this
-
-export function computeCityTotals(city) {
-  const totals = Object.fromEntries(
-    Object.keys(buildingsList[0].deltas).map(k => [k, 0])
-  );
-
-  for (const b of city.buildings) {
-    if (b.mothballed || b.beingBuilt) continue;
-    const t = getBuildingTemplate(b.template);
-
-    for (const [k, v] of Object.entries(t.deltas)) {
-      totals[k] += v * b.count;
-    }
-  }
-
-  return totals;
-}
-
-// --- Construction ---
-
-export function startConstruction(city, templateName, count = 1) {
-  const existing = city.buildings.find(b => b.template === templateName);
-
-  if (existing) {
-    existing.beingBuilt = true;
-    existing.count += count;
-  } else {
-    city.buildings.push({
-      template: templateName,
-      count,
-      mothballed: false,
-      beingBuilt: true
-    });
-  }
-}
-
-// --- City Tick ---
-
-export function advanceCityTurn(city) {
-  const totals = computeCityTotals(city);
-
-  // Apply totals to city resources
-  for (const [key, val] of Object.entries(totals)) {
-    if (key in city.resources) {
-      city.resources[key] += val;
-    }
-  }
-
-  // Complete all 1-turn construction
-  for (const b of city.buildings) {
-    if (b.beingBuilt) {
-      b.beingBuilt = false;
-    }
-  }
-}
-
-export function computeGlobalDeltas() {
-  // Reset deltas
-  for (const key in resources) {
-    resources[key].delta = 0;
-  }
-
-  // Sum all cities’ production/maintenance
-  for (const c of cities) {
-    const totals = computeCityTotals(c);
-
-    for (const key in resources) {
-      if (key in totals) {
-        resources[key].delta += totals[key];
-      }
-    }
-  }
-
-}
-
-
-// Reset all deltas to 0 at start of turn
+/**
+ * Reset all resource deltas to 0
+ */
 export function resetDeltas() {
   for (const r of Object.values(resources)) {
     r.delta = 0;
   }
 }
 
-// Apply the delta to compute final values
+/**
+ * Compute total production/consumption for a city
+ */
+export function computeCityTotals(city) {
+  const totals = Object.fromEntries(Object.keys(buildingsList[0].deltas).map(k => [k, 0]));
+
+  for (const b of city.buildings) {
+    if (b.mothballed || b.beingBuilt) continue;
+    const tpl = buildingsList.find(bl => bl.name === b.template);
+    if (!tpl) continue;
+    for (const [k, v] of Object.entries(tpl.deltas)) {
+      totals[k] += v * b.count;
+    }
+  }
+  return totals;
+}
+
+/**
+ * Compute global deltas across all cities
+ */
+export function computeGlobalDeltas() {
+  resetDeltas();
+  for (const city of cities) {
+    const cityTotals = computeCityTotals(city);
+    for (const key in cityTotals) {
+      if (resources[key]) resources[key].delta += cityTotals[key];
+    }
+  }
+}
+
+/**
+ * Apply deltas to compute final values
+ */
 export function computeFinals() {
-  for (const r of Object.values(resources)) {
+  for (const key in resources) {
+    const r = resources[key];
     r.final = r.initial + r.delta;
   }
 }
 
-// Commit final values as new initial values for next turn
+/**
+ * Commit final values as new initial values
+ */
 export function commitTurn() {
   for (const r of Object.values(resources)) {
     r.initial = r.final;
@@ -229,9 +62,93 @@ export function commitTurn() {
   }
 }
 
-// Apply a delta object to the resources
-export function applyDelta(delta) {
-  for (const key in delta) {
-    if (resources[key]) resources[key].delta += delta[key];
+/**
+ * Compute projected next-turn values without committing
+ */
+export function projectedNextTurnValues() {
+  computeGlobalDeltas();
+  const next = {};
+  for (const key in resources) {
+    next[key] = resources[key].initial + resources[key].delta;
+  }
+  return next;
+}
+
+/**
+ * Simulate a full turn: apply building outputs, handle mothballing to prevent negatives, and update finals
+ */
+export function simulateTurn() {
+  computeGlobalDeltas();
+
+  const starving = [];
+
+  // Auto-mothball buildings if a resource would go negative
+  for (const key in resources) {
+    const projected = resources[key].initial + resources[key].delta;
+    if (projected >= 0) continue;
+
+    starving.push(key);
+    autoMothballBuildings(key);
+
+    // Recalculate after mothballing
+    resources[key].delta = computeGlobalDeltasForResource(key);
+
+    // Clamp if still negative
+    if (resources[key].initial + resources[key].delta < 0) {
+      resources[key].delta = -resources[key].initial;
+    }
+  }
+
+  computeFinals();
+}
+
+/**
+ * Auto-mothball buildings that consume a specific resource
+ */
+function autoMothballBuildings(resourceKey) {
+  const offenders = [];
+  for (const city of cities) {
+    for (const b of city.buildings) {
+      if (b.mothballed) continue;
+      const tpl = buildingsList.find(t => t.name === b.template);
+      const rate = tpl?.deltas[resourceKey] ?? 0;
+      if (rate < 0) offenders.push({ city, b, rate });
+    }
+  }
+
+  offenders.sort((a, b) => a.rate - b.rate);
+
+  for (const { b, rate } of offenders) {
+    if (resources[resourceKey].initial + resources[resourceKey].delta >= 0) break;
+    b.mothballed = true;
+  }
+}
+
+/**
+ * Compute global delta for a specific resource
+ */
+function computeGlobalDeltasForResource(key) {
+  let total = 0;
+  for (const city of cities) {
+    for (const b of city.buildings) {
+      if (b.mothballed || b.beingBuilt) continue;
+      const tpl = buildingsList.find(t => t.name === b.template);
+      if (!tpl) continue;
+      total += (tpl.deltas[key] ?? 0) * b.count;
+    }
+  }
+  return total;
+}
+
+/**
+ * Start construction in a city
+ */
+export function startConstruction(city, templateName, count = 1) {
+  const existing = city.buildings.find(b => b.template === templateName);
+  if (existing) {
+    existing.beingBuilt = true;
+    existing.count += count;
+  } else {
+    city.buildings.push({ template: templateName, count, mothballed: false, beingBuilt: true });
   }
 }
