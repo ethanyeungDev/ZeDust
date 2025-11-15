@@ -1,8 +1,12 @@
-const devmode=false;
-
+const devmode=true;
+//Note: if the delay is zero, browser tracking protection may activate and stop access to libraries.
 if(devmode){
-  document.querySelector("#loadingBox").style.display = "none";
-    document.querySelector("#gameBox").style.display = "flex";
+    document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+        document.querySelector("#loadingBox").style.display = "none";
+        document.querySelector("#gameBox").classList.add("default");
+    }, 1000);
+    });
 }
 else{
     document.addEventListener("DOMContentLoaded", () => {

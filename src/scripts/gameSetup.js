@@ -1,3 +1,5 @@
+// massive scope creep, cutting hex map for bugs
+
 // import * as hcLib from "../../node_modules/honeycomb-grid/dist/honeycomb-grid.mjs";
 
 // import  { defineHex, Grid, rectangle } from "../../node_modules/honeycomb-grid/dist/honeycomb-grid.mjs";
@@ -59,39 +61,55 @@ function dragElement(elmnt) {
   }
 }
 
-// chart setup
-var xyValues = [
-  {x:50, y:7},
-  {x:60, y:8},
-  {x:70, y:8},
-  {x:80, y:9},
-  {x:90, y:9},
-  {x:100, y:9},
-  {x:110, y:10},
-  {x:120, y:11},
-  {x:130, y:14},
-  {x:140, y:14},
-  {x:150, y:15}
-];
 
-const chart=document.getElementById('resourceChart')
 
-new Chart(chart, {
-  type: "scatter",
-  data: {
-    datasets: [{
-      pointRadius: 4,
-      pointBackgroundColor: "rgb(0,0,255)",
-      data: xyValues
-    }]
-  },
-  options: {
-    responsive:true,
-    maintainAspectRatio: true,
-    legend: {display: false},
-    scales: {
-      xAxes: [{ticks: {min: 40, max:160}}],
-      yAxes: [{ticks: {min: 6, max:16}}],
-    }
-  }
-});
+ 
+
+// // chart setup
+// const xyValues = [
+//   {x:50, y:7},
+//   {x:60, y:8},
+//   {x:70, y:8},
+//   {x:80, y:9},
+//   {x:90, y:9},
+//   {x:100, y:9},
+//   {x:110, y:10},
+//   {x:120, y:11},
+//   {x:130, y:14},
+//   {x:140, y:14},
+//   {x:150, y:15}
+// ];
+
+// const chart = document.getElementById('resourceChart');
+// chart.classList.add('defaultPos');
+
+// new Chart(chart, {
+//   type: "scatter",
+//   data: {
+//     datasets: [{
+//       pointRadius: 4,
+//       pointBackgroundColor: "rgb(0,0,255)",
+//       data: xyValues
+//     }]
+//   },
+//   options: {
+//     responsive: true,
+//     maintainAspectRatio: false, // allows CSS to control the canvas height
+//     plugins: {
+//       legend: { display: false }
+//     },
+//     scales: {
+//       x: {
+//         type: 'linear',
+//         min: 40,
+//         max: 160,
+//         title: { display: true, text: 'X Axis' }
+//       },
+//       y: {
+//         min: 6,
+//         max: 16,
+//         title: { display: true, text: 'Y Axis' }
+//       }
+//     }
+//   }
+ 

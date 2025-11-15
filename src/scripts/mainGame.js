@@ -1,8 +1,42 @@
+import { initModal } from "./ui/modal.js";
+import { initCharts } from "./ui/charts.js";
+import {projectedNextTurnValues} from "./campaign/turnSystem.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+  initCharts();
+  initModal();
+});
+
+
 const choiceBox=document.getElementById("choiceBox");
 const choiceBoxList=document.getElementById("choiceBoxList");
-const resourceChart=document.getElementById('resourceChart')
+const resourceChart=document.getElementById('resourceChart');
  
-// Various helper functions
+
+
+// --- Listener Containment Zone ---
+
+nextTurnBtn.addEventListener('click', () => {
+  modal.classList.remove('hidden');
+});
+
+const modal = document.getElementById('confirmModal');
+nextTurnBtn.addEventListener('click', () => {
+  modal.classList.add('show');
+});
+
+confirmNo.addEventListener('click', () => {
+  modal.classList.remove('show');
+});
+
+confirmYes.addEventListener('click', () => {
+  modal.classList.remove('show');
+  simulateTurn();
+});
+
+// UI helper functions
+
+
 
 function clearChoices(e){
     const parent = e.currentTarget.parentElement;
@@ -14,14 +48,33 @@ function clearChoices(e){
     grandfather.style.display = "none";
 }
 
-runIntro();
-runStageOne();
+// Used to set or reset the initial positions of all the draggable elements.
 
+function moveToVH(element, vh, customInnerHeight = window.innerHeight){
+  if (!(element instanceof HTMLElement)) {
+    console.error('moveToVH: attempting to move something that is not an HTML element');
+    return;
+  }
+
+  const yPosition = customInnerHeight * (vh / 100);
+  element.style.position = 'absolute';
+  element.style.top = `${yPosition}px`;
+
+}
+
+// 
+
+// runIntro();
+runStageOne();
 
 // Introduction scene
 
+console.log("Projected:", projectedNextTurnValues());
 
 function runIntro(){
+
+// I broke the audio irrepairably and despite taking an extra day I couldn't fix it without the revert breaking the modal box (?????), so now there is no audio.
+
     // Sounds of a cold open - a crowd screams, baying for blood. Your blood. 
     console.log("Intro script is running.")
 
@@ -52,7 +105,9 @@ function runIntro(){
 
     choiceBoxList.appendChild(choice1);
     choiceBoxList.appendChild(choice2);
-
+    moveToVH(choiceBox, Number(choiceBox.dataset.defaultVh));
+    
+    console.log(choiceBox.dataset.defaultVh); 
         //If you choose white phosphorus, play the sounds of people burning in agony.
             //give the ironic title "Candidate of Law and Order" with some stat tweaks and possible dialog changes
         //If you choose to throw the Abbot out of the window, play in order 1. a man says no 2. heavy thud 3. glass breaks 4. screaming on the way down, fading out
@@ -66,7 +121,9 @@ function runIntro(){
 
 function runStageOne(){
     resourceChart.classList.add('defaultPos')
-    // resourceChart.update();
+    resourceChart.height = resourceChart.offsetHeight;
+       
+    moveToVH(choiceBox, Number(choiceBox.dataset.defaultVh));
 }
 
 
@@ -74,7 +131,7 @@ function runStageOne(){
 
 function runStageTwo()
 {
-    
+    console.log("hello world");
 }
 //Apotheosis - Before the Fall, there was no darkness in coffins. 
 
