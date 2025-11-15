@@ -1,6 +1,6 @@
 // ui/modal.js
 import { simulateTurn } from "../campaign/turnSystem.js";
-import { updateCharts } from "../ui/charts.js";
+import { updateCharts } from "./netChart.js";
 
 export function initModal() {
   const btn = document.getElementById("nextTurnBtn");

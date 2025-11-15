@@ -2,6 +2,8 @@ import { resources } from "../campaign/resources.js";
 import { cities } from "../campaign/cities.js";
 // import { projectedNextTurnValues } from "../campaign/turnSystem.js"; 
 
+// This file handles the nice big 
+
 let resourceChart;
 
 export function initCharts() {

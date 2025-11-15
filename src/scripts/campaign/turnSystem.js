@@ -1,7 +1,7 @@
 // systems/turnSystem.js
-import { buildingsList } from "../campaign/buildings.js";
-import { resources, applyResourceDelta, zeroDelta } from "../campaign/resources.js";
-import { cities } from "../campaign/cities.js";
+import { buildingsList } from "./buildings.js";
+import { resources, applyResourceDelta, zeroDelta } from "./resources.js";
+import { cities } from "./cities.js";
 
 export function simulateTurn() {
   const starving = [];
@@ -68,6 +68,7 @@ export function simulateTurn() {
 
   // --- STEP 6: Update Charts ---
   updateCharts();
+  updateAllCityCharts();
 }
 
 

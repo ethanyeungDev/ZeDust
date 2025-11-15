@@ -352,3 +352,5 @@ export const buildingsList = [
   }
 }
 ];
+
+export const buildingMap = Object.fromEntries(buildingsList.map(b => [b.name, b]));

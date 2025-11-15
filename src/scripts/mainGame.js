@@ -1,10 +1,52 @@
 import { initModal } from "./ui/modal.js";
-import { initCharts } from "./ui/charts.js";
+import { initCharts } from "./ui/netChart.js";
 import {projectedNextTurnValues} from "./campaign/turnSystem.js";
+import { renderSidebar } from './ui/sidebar.js';
+import { cities } from './campaign/cities.js';
+import { simulateTurn } from './campaign/turnSystem.js';
+import { updateAllCityCharts } from './ui/cityCharts.js';
+
+// expose a small helper for ui_cityPanel to call (keeps modules tidy)
+export function startConstructionInCity(cityIndex, templateName) {
+  const city = cities[cityIndex];
+  if (!city) return;
+  city.buildings.push({ template: templateName, count: 1, mothballed: false, beingBuilt: true });
+  // re-render UI immediately so user sees the queued construction
+  renderSidebar();
+  updateAllCityCharts();
+}
+
+// setup next-turn button + modal
+function wireNextTurnModal() {
+  const nextTurnBtn = document.getElementById('nextTurnBtn');
+  const modal = document.getElementById('confirmModal');
+  const confirmYes = document.getElementById('confirmYes');
+  const confirmNo = document.getElementById('confirmNo');
+
+  nextTurnBtn.addEventListener('click', () => {
+    modal.classList.add('show');
+  });
+
+  confirmNo.addEventListener('click', () => {
+    modal.classList.remove('show');
+  });
+
+  confirmYes.addEventListener('click', () => {
+    modal.classList.remove('show');
+    // Run one global turn
+    simulateTurn();
+    // Refresh UI after turn completes
+    renderSidebar();
+  });
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   initCharts();
   initModal();
+  renderSidebar();
+  wireNextTurnModal();
+  updateAllCityCharts();
+    renderCityPanels();
 });
 
 
@@ -35,8 +77,6 @@ confirmYes.addEventListener('click', () => {
 });
 
 // UI helper functions
-
-
 
 function clearChoices(e){
     const parent = e.currentTarget.parentElement;

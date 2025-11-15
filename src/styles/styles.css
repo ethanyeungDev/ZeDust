@@ -1,4 +1,7 @@
 /*Vaguely Fallout New Vegas style colour palette.*/
+
+/* im aware the colors are supposed to all be in one consistent data format but i am tired */
+
 :root{
    --f_blue:	#2ecfff;
    --light_amber:#f5deb3;
@@ -237,7 +240,7 @@ ul{
   display: flex; /* only show when JS toggles 'show' */
   animation: fadeIn 0.2s ease-in;
 }
-/* I'm not sure why I needed !important - not sure what I'm overriding here. */
+/* I'm not sure why I need !important - not sure what I'm overriding here. But it's definitely overriding something, and I couldn't detect any actual bugs. */
 .hidden {
   display: none !important;   
   /* display: none; */
@@ -279,47 +282,61 @@ ul{
   to { opacity: 1; }
 }
 
+/* Sidebar on the right to jam the city into. I might make it a flex or a grid */
+#citySidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 340px;
+  height: 100%;
+  background: var(--panel);
+  border-left: 2px solid #333;
+  overflow-y: auto;
+  padding: 1rem;
+  box-shadow: -6px 0 20px rgba(0,0,0,0.6);
+}
+
+/* City Panel */
 .city-panel {
-  background: #222;
-  color: #eee;
-  border: 2px solid #555;
+  background-color: #f4f4f8;
+  border: 1px solid #bdc3c7;
   border-radius: 8px;
   padding: 1rem;
-  margin: 1rem 0;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .city-header {
-  font-size: 1.4rem;
+  background-color: #7ca1c5;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-weight: bold;
-  margin-bottom: 0.5rem;
 }
 
-.city-subheader {
-  font-size: 1.1rem;
-  margin-top: 0.5rem;
+.city-header h3 { margin: 0; font-size: 1rem; }
+.city-subtitle {
+  font-size: 0.85rem;
+  font-weight: normal;
+  color: #ecf0f1;
 }
 
-.building-list, .delta-list {
-  margin-left: 1rem;
-  padding: 0;
-  list-style: none;
-}
+.building-list { margin: 0.5rem 0 0; padding: 0; list-style: none; font-size: 0.9rem; }
 
-.delta-list li {
-  font-size: 0.9rem;
-}
+.building-list li { padding: 0.2rem 0; display:flex; justify-content:space-between; gap:0.5rem; }
+.building-meta { color: var(--muted); font-size: 0.85rem; }
 
-.construction-row {
-  margin-top: 1rem;
-}
+.delta-list { margin: 0.5rem 0 0; padding: 0; list-style: none; font-size: 0.9rem; display:flex; flex-wrap:wrap; gap:0.4rem; }
+.delta-item { padding: 0.25rem 0.5rem; border-radius: 6px; background:#0f0f0f; border:1px solid #222; font-size:0.85rem; }
 
-.construction-row select {
-  background: #111;
-  color: #fff;
-  padding: 0.4rem;
-}
+/* color rules added by ui_colors.js will also apply classes .positive .negative .zero */
 
-.construction-row button {
-  margin-left: 0.5rem;
-  padding: 0.4rem 0.8rem;
-}
+.construction-row { display:flex; gap:0.5rem; margin-top:0.75rem; align-items:center; }
+.construction-row select { flex:1; background:#0f0f0f; color:var(--text); padding:0.4rem; border-radius:6px; border:1px solid #2b2b2b;}
+.construction-row button { background:var(--accent); color:white; border:none; padding:0.4rem 0.6rem; border-radius:6px; cursor:pointer; }
+
+.canvas-small { width:100%; height:140px; display:block; margin-top:0.5rem; }

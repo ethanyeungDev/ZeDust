@@ -67,10 +67,13 @@ export const resources = {
 
 export function applyResourceDelta(delta) {
   for (const resourceIndex in delta) {
-    resources[resourceIndex] = (resources[resourceIndex] ?? 0) + delta[resourceIndex];
+    if (resources[resourceIndex]) {
+      resources[resourceIndex].delta += delta[resourceIndex];
+    } else {
+      console.warn(`Unknown resource: ${resourceIndex}`);
+    }
   }
 }
-
 //Originally I wasn't going to have a base object delta at all, but I ultimately refactored out the "set 0 if null" out of my functions because it was getting hard to read.
 export function zeroDelta() {
   return {
