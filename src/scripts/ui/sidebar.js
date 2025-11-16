@@ -1,30 +1,28 @@
-
-  //dang the white on black looks pretty good actually
-
-
-// ui/sidebar.js
 import { cities } from '../campaign/cities.js';
 import { createCityPanel } from './cityPanel.js';
 
+/**
+ * Render the sidebar with all city panels side by side
+ */
 export function renderSidebar() {
   const container = document.getElementById('citySidebar');
-  if (!container) {
-    console.error("Cannot find #citySidebar in the DOM");
-    return;
-  }
+  if (!container) return;
+  container.innerHTML = '';
 
-  container.innerHTML = ''; // clear existing content
+  // Flex layout for horizontal city panels
   container.style.display = 'flex';
   container.style.flexWrap = 'wrap';
   container.style.gap = '1rem';
-  container.style.padding = '1rem';
   container.style.justifyContent = 'flex-start';
   container.style.alignItems = 'flex-start';
+  container.style.width = '50vw'; // go all the way to the middle of the page
+  container.style.maxWidth = '100%';
+  container.style.paddingRight = '1rem';
 
-  // Optional overall title for the sidebar
+  // Optional title
   const title = document.createElement('div');
+  title.innerHTML = `<h2 style="margin:0 0 0.75rem 0; text-align: center; color:white; font-size:1.3rem;">City Manager</h2>`;
   title.style.width = '100%';
-  title.innerHTML = `<h2 style="margin:0 0 0.75rem 0; text-align:center; color:white; font-size:1.2rem; box-shadow: 0 0 10px rgba(188,220,230,0.4);">City Manager</h2>`;
   container.appendChild(title);
 
   cities.forEach((city, idx) => {

@@ -1,6 +1,5 @@
 import { buildingsList, buildingMap } from '../campaign/buildings.js';
 import { startConstructionInCity } from '../mainGame.js';
-import { valueClassFor, applyValueClass } from './colors.js';
 
 /**
  * Calculate deltas for a single building
@@ -42,37 +41,69 @@ export function createCityPanel(city, cityIndex) {
   table.style.width = '100%';
   table.style.borderCollapse = 'collapse';
   table.style.fontFamily = 'monospace';
+  table.style.tableLayout = 'fixed';
+
   const thead = document.createElement('thead');
   thead.innerHTML = `<tr>
-      <th style="text-align:left;">Building</th>
-      <th>Deltas</th>
-      <th>Mothballed</th>
+      <th style="text-align:left; border-bottom:1px solid #555;">Building</th>
+      <th style="border-bottom:1px solid #555;">Deltas</th>
+      <th style="border-bottom:1px solid #555;">Mothballed</th>
     </tr>`;
   table.appendChild(thead);
 
   const tbody = document.createElement('tbody');
 
-  city.buildings.forEach((b, i) => {
+  city.buildings.forEach((b) => {
     const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid #555';
 
-    // Building name
+    // --- Building name ---
     const tdName = document.createElement('td');
     tdName.textContent = `${b.template} × ${b.count}`;
     tdName.style.padding = '0.25rem';
     tr.appendChild(tdName);
 
-    // Building deltas
+    // --- Deltas as nested table ---
     const tdDeltas = document.createElement('td');
     tdDeltas.style.padding = '0.25rem';
+
     const deltas = calculateBuildingDeltas(b);
-    tdDeltas.textContent = Object.entries(deltas)
-      .map(([res, val]) => `${res}: ${val >= 0 ? '+' : ''}${val}`)
-      .join(' | ');
+    const deltaTable = document.createElement('table');
+    deltaTable.style.width = '100%';
+    deltaTable.style.borderCollapse = 'collapse';
+
+    const deltaTbody = document.createElement('tbody');
+    Object.entries(deltas).forEach(([res, val]) => {
+      const deltaTr = document.createElement('tr');
+
+      const resTd = document.createElement('td');
+      resTd.textContent = res;
+      resTd.style.borderBottom = '1px solid #555';
+      resTd.style.padding = '0 0.25rem';
+      resTd.style.textAlign = 'left';
+      resTd.style.width = '50%';
+      deltaTr.appendChild(resTd);
+
+      const valTd = document.createElement('td');
+      valTd.textContent = val >= 0 ? `+${val}` : val;
+      valTd.style.borderBottom = '1px solid #555';
+      valTd.style.padding = '0 0.25rem';
+      valTd.style.textAlign = 'right';
+      valTd.style.width = '50%';
+      deltaTr.appendChild(valTd);
+
+      deltaTbody.appendChild(deltaTr);
+    });
+
+    deltaTable.appendChild(deltaTbody);
+    tdDeltas.appendChild(deltaTable);
     tr.appendChild(tdDeltas);
 
-    // Mothballed indicator
+    // --- Mothballed indicator ---
     const tdMoth = document.createElement('td');
     tdMoth.style.padding = '0.25rem';
+    tdMoth.style.textAlign = 'center';
+
     const mothBox = document.createElement('div');
     mothBox.style.width = '1.5rem';
     mothBox.style.height = '1.5rem';
@@ -83,6 +114,7 @@ export function createCityPanel(city, cityIndex) {
     mothBox.style.cursor = 'pointer';
     mothBox.style.color = 'white';
     mothBox.style.fontWeight = 'bold';
+
     function updateMothBox() {
       mothBox.style.background = b.mothballed ? 'red' : 'green';
       mothBox.textContent = b.mothballed ? 'Y' : 'N';
@@ -92,6 +124,7 @@ export function createCityPanel(city, cityIndex) {
     mothBox.addEventListener('click', () => {
       b.mothballed = !b.mothballed;
       updateMothBox();
+      // optionally re-render sidebar to update city totals
     });
 
     tdMoth.appendChild(mothBox);
@@ -103,7 +136,7 @@ export function createCityPanel(city, cityIndex) {
   table.appendChild(tbody);
   panel.appendChild(table);
 
-  // Construction dropdown
+  // --- Construction dropdown ---
   const dropdown = document.createElement('select');
   const placeholder = document.createElement('option');
   placeholder.textContent = 'Construct new building...';
@@ -120,9 +153,10 @@ export function createCityPanel(city, cityIndex) {
 
   dropdown.addEventListener('change', (e) => {
     startConstructionInCity(cityIndex, e.target.value);
-    e.target.selectedIndex = 0; // reset
+    e.target.selectedIndex = 0;
   });
 
+  dropdown.style.marginTop = '0.5rem';
   panel.appendChild(dropdown);
 
   return panel;
