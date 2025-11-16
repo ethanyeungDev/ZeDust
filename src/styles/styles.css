@@ -61,6 +61,7 @@ ul{
     blink-caret .75s step-end infinite;
   font-size: 15vh;
 }
+
 .borderBox{
     background-color: #e2e2df;
     background-blend-mode:difference;
@@ -94,12 +95,6 @@ ul{
   padding: 0 0;
   margin: 0 0;
 }
-
-#choiceBoxList>li{
-  
-}
-
-
 
 
 
@@ -267,6 +262,8 @@ ul{
   cursor: pointer;
   transition: background-color 0.2s ease; 
 
+}
+
 .modal-actions button:hover {
   background-color: #005fcc;
 }
@@ -277,6 +274,7 @@ ul{
 }
 
 /* Sidebar on the right to jam the city into. I might make it a flex or a grid */
+/* Sidebar */
 #citySidebar {
   position: fixed;
   top: 0;
@@ -301,9 +299,10 @@ ul{
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Header */
 .city-header {
   background-color: #7ca1c5;
-  color: #ffffff;
+  color: #fff;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   display: flex;
@@ -313,40 +312,138 @@ ul{
 }
 
 .city-header h3 { margin: 0; font-size: 1rem; }
-.city-subtitle {
-  font-size: 0.85rem;
-  font-weight: normal;
-  color: #ecf0f1;
+.city-subtitle { font-size: 0.85rem; font-weight: normal; color: #ecf0f1; }
+
+/* Lists */
+.building-list,
+.delta-list {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.building-list { margin: 0.5rem 0 0; padding: 0; list-style: none; font-size: 0.9rem; }
-
-.building-list li { padding: 0.2rem 0; display:flex; justify-content:space-between; gap:0.5rem; }
-.building-meta { color: var(--muted); font-size: 0.85rem; }
-
-.delta-list { margin: 0.5rem 0 0; padding: 0; list-style: none; font-size: 0.9rem; display:flex; flex-wrap:wrap; gap:0.4rem; }
-.delta-item { padding: 0.25rem 0.5rem; border-radius: 6px; background:#0f0f0f; border:1px solid #222; font-size:0.85rem; }
-
-/* color rules added by ui_colors.js will also apply classes .positive .negative .zero */
-
-.construction-row { display:flex; gap:0.5rem; margin-top:0.75rem; align-items:center; }
-.construction-row select { flex:1; background:#0f0f0f; color:var(--text); padding:0.4rem; border-radius:6px; border:1px solid #2b2b2b;}
-.construction-row button { background:var(--accent); color:white; border:none; padding:0.4rem 0.6rem; border-radius:6px; cursor:pointer; }
-
-.canvas-small { width:100%; height:140px; display:block; margin-top:0.5rem; }
-
-.city-panel table {
-  border-collapse: collapse;
-  width: 100%;
-  background-color: rgb(155, 163, 136); 
+.building-list li {
+  padding: 0.2rem 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
-.city-panel td {
+
+.delta-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.delta-item {
   padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  background: #0f0f0f;
+  border: 1px solid #222;
+  font-size: 0.85rem;
 }
+
+/* Construction */
+.construction-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  align-items: center;
+}
+
+.construction-row select {
+  flex: 1;
+  background: #0f0f0f;
+  color: var(--text);
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid #2b2b2b;
+}
+
+.construction-row button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.canvas-small {
+  width: 100%;
+  height: 140px;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+/* Table */
+.city-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Roboto, sans-serif;
+  background: #FFFFFF;
+  color: #000000;
+}
+
+.city-table th {
+  background: #002A5E; /* Primary AAA accent */
+  color: #FFFFFF;      /* AAA */
+  padding: 10px 14px;
+  border: 1px solid #0D1B2A; /* Strong, AAA border */
+  font-weight: 700;
+}
+
+.city-table td {
+  padding: 8px 14px;
+  border: 1px solid #0D1B2A;
+}
+
+
+.city-panel th:nth-child(1),
+.city-panel td:nth-child(1) {
+  width: 45%;
+  text-align: left;
+}
+
+.city-table tr:nth-child(even) {
+  background: #F2F2F2; /* Subtle alt row, AAA, something something it's even got a watermark */
+} 
+
+.city-table tr:hover {
+  background: #D7F4FF; /* Ice Blue (AAA on black & dark) */
+}
+
+.city-panel th:nth-child(2),
+.city-panel td:nth-child(2) {
+  width: 40%;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.city-panel th:nth-child(3),
+.city-panel td:nth-child(3) {
+  width: 15%;
+  text-align: center;
+}
+
+.city-panel tbody tr:hover {
+  background: #222;
+}
+
+/* Mothball toggle */
+.city-panel .mothbox {
+  width: 1.6rem;
+  height: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
 .mothballed {
   opacity: 0.5;
   text-decoration: line-through;
 }
+
+/* Select fallback */
 .city-panel select {
   width: 100%;
   padding: 0.25rem;

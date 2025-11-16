@@ -15,7 +15,7 @@ function calculateBuildingDeltas(building) {
 }
 
 /**
- * Create a city panel element
+ * Create a city panel element for one individual city
  */
 export function createCityPanel(city, cityIndex) {
   const panel = document.createElement('div');
@@ -161,3 +161,4 @@ export function createCityPanel(city, cityIndex) {
 
   return panel;
 }
+
