@@ -273,37 +273,43 @@ ul{
   to { opacity: 1; }
 }
 
-/* Sidebar on the right to jam the city into. I might make it a flex or a grid */
-/* Sidebar */
+/* ============================================
+   SIDEBAR (AAA, No blue)
+=============================================== */
 #citySidebar {
   position: fixed;
   top: 0;
   right: 0;
-  width: 340px;
+  width: 380px;
   height: 100%;
-  background: var(--panel);
-  border-left: 2px solid #333;
+  background: #b89090;   /* dark neutral */
+  color: #FFFFFF;        /* AAA contrast */
+  border-left: 2px solid #3C3C3C;
   overflow-y: auto;
   padding: 1rem;
   box-shadow: -6px 0 20px rgba(0,0,0,0.6);
+  font-family: Roboto, sans-serif;
 }
 
-/* City Panel */
+/* ============================================
+   CITY PANEL
+=============================================== */
 .city-panel {
-  background-color: #f4f4f8;
-  border: 1px solid #bdc3c7;
+  background: #FFFFFF;    /* pure white */
+  border: 1px solid #555555;
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
-  color: #2c3e50;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  color: #000000;         /* AAA */
 }
 
-/* Header */
+/* ============================================
+   HEADER
+=============================================== */
 .city-header {
-  background-color: #7ca1c5;
-  color: #fff;
-  padding: 0.5rem 1rem;
+  background: #3C3C3C;  /* medium neutral grey */
+  color: #FFFFFF;       /* AAA on grey */
+  padding: 0.5rem 1rem 0.2rem 1rem;
   border-radius: 6px;
   display: flex;
   justify-content: space-between;
@@ -311,122 +317,74 @@ ul{
   font-weight: bold;
 }
 
+.city-title {
+    margin: 0 0 1rem 0;             /* more space BELOW the title */
+    padding-bottom: 0.25rem;        /* reduces blank space *inside* the box at the bottom */
+
+    /* Subtle 3D effect */
+    text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+    transform: translateZ(0);       /* helps rendering look crisp */
+
+    /* If the header box has a background, adding this enhances separation */
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
 .city-header h3 { margin: 0; font-size: 1rem; }
-.city-subtitle { font-size: 0.85rem; font-weight: normal; color: #ecf0f1; }
 
-/* Lists */
-.building-list,
-.delta-list {
-  margin: 0.5rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.building-list li {
-  padding: 0.2rem 0;
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.delta-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.delta-item {
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  background: #0f0f0f;
-  border: 1px solid #222;
-  font-size: 0.85rem;
-}
-
-/* Construction */
-.construction-row {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-  align-items: center;
-}
-
-.construction-row select {
-  flex: 1;
-  background: #0f0f0f;
-  color: var(--text);
-  padding: 0.4rem;
-  border-radius: 6px;
-  border: 1px solid #2b2b2b;
-}
-
-.construction-row button {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  padding: 0.4rem 0.6rem;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.canvas-small {
-  width: 100%;
-  height: 140px;
-  display: block;
-  margin-top: 0.5rem;
-}
-
-/* Table */
+/* ============================================
+   TABLE (AAA, neutral-only)
+=============================================== */
 .city-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: Roboto, sans-serif;
   background: #FFFFFF;
   color: #000000;
+  table-layout: fixed;
+  font-family: Roboto, sans-serif;
 }
 
+/* Header row */
 .city-table th {
-  background: #002A5E; /* Primary AAA accent */
-  color: #FFFFFF;      /* AAA */
+  background: #3C3C3C;     /* Same as header */
+  color: #FFFFFF;
   padding: 10px 14px;
-  border: 1px solid #0D1B2A; /* Strong, AAA border */
+  border: 1px solid #555555;
   font-weight: 700;
 }
 
+/* Cells */
 .city-table td {
   padding: 8px 14px;
-  border: 1px solid #0D1B2A;
+  border: 1px solid #555555;
 }
 
+/* Column widths */
+.city-table th:nth-child(1),
+.city-table td:nth-child(1) { width: 45%; }
 
-.city-panel th:nth-child(1),
-.city-panel td:nth-child(1) {
-  width: 45%;
-  text-align: left;
-}
-
-.city-table tr:nth-child(even) {
-  background: #F2F2F2; /* Subtle alt row, AAA, something something it's even got a watermark */
-} 
-
-.city-table tr:hover {
-  background: #D7F4FF; /* Ice Blue (AAA on black & dark) */
-}
-
-.city-panel th:nth-child(2),
-.city-panel td:nth-child(2) {
+.city-table th:nth-child(2),
+.city-table td:nth-child(2) {
   width: 40%;
-  text-align: left;
   white-space: nowrap;
 }
 
-.city-panel th:nth-child(3),
-.city-panel td:nth-child(3) {
-  width: 15%;
-  text-align: center;
+.city-table th:nth-child(3),
+.city-table td:nth-child(3) { width: 15%; text-align: center; }
+
+/* Zebra rows */
+.city-table tr:nth-child(even) {
+  background: #F5F5F5;
 }
 
-.city-panel tbody tr:hover {
-  background: #222;
+/* Hover (soft, neutral) */
+.city-table tr:hover {
+  background: #E8E8E8;
 }
 
-/* Mothball toggle */
-.city-panel .mothbox {
+/* ============================================
+   MOTHBALL TOGGLE
+=============================================== */
+.mothbox {
   width: 1.6rem;
   height: 1.6rem;
   display: flex;
@@ -438,15 +396,34 @@ ul{
   cursor: pointer;
 }
 
-.mothballed {
-  opacity: 0.5;
-  text-decoration: line-through;
+/* ============================================
+   CONSTRUCTION PANEL
+=============================================== */
+.construction-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  align-items: center;
 }
 
-/* Select fallback */
-.city-panel select {
-  width: 100%;
-  padding: 0.25rem;
-  border-radius: 4px;
-  margin-top: 0.5rem;
+.construction-row select {
+  flex: 1;
+  background: #FFFFFF;
+  color: #000000;
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid #555555;
+}
+
+.construction-row button {
+  background: #3C3C3C;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.construction-row button:hover {
+  background: #4A4A4A;
 }

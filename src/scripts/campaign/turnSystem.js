@@ -3,6 +3,52 @@ import { buildingsList } from "./buildings.js";
 import { resources } from "./resources.js";
 import { cities } from "./cities.js";
 
+
+/**
+ * Simulate one full turn.
+ * - Finish construction
+ * - Compute fresh deltas
+ * - Auto-mothball if a resource goes negative
+ * - Recompute affected deltas
+ * - Clamp
+ * - Finalize totals
+ */
+export function simulateTurn() {
+  // 1. Construction completes BEFORE any production for the new turn
+  finalizeConstructionForTurn(cities);
+
+  cities.forEach(city => mergeCompletedBuildings(city));
+
+  // 2. Compute fresh production/maintenance deltas
+  computeGlobalDeltas();
+
+  const starving = [];
+
+  // 3. Check each resource for negative projected values
+  for (const key in resources) {
+    const projected = resources[key].initial + resources[key].delta;
+
+    if (projected >= 0) continue;
+
+    starving.push(key);
+
+    // 4. Auto-mothball buildings that consume this resource
+    autoMothballBuildings(key);
+
+    // 5. Recompute JUST this resource's delta efficiently
+    const recomputed = computeGlobalDeltasForResource(key);
+    resources[key].delta = recomputed;
+
+    // 6. Clamp to prevent resource from going negative
+    if (resources[key].initial + resources[key].delta < 0) {
+      resources[key].delta = -resources[key].initial;
+    }
+  }
+
+  // 7. Apply the updated deltas to finalize resource totals
+  computeFinals();
+}
+
 /**
  * Reset all resource deltas to 0
  */
@@ -74,33 +120,7 @@ export function projectedNextTurnValues() {
   return next;
 }
 
-/**
- * Simulate a full turn: apply building outputs, handle mothballing to prevent negatives, and update finals
- */
-export function simulateTurn() {
-  computeGlobalDeltas();
 
-  const starving = [];
-
-  // Auto-mothball buildings if a resource would go negative
-  for (const key in resources) {
-    const projected = resources[key].initial + resources[key].delta;
-    if (projected >= 0) continue;
-
-    starving.push(key);
-    autoMothballBuildings(key);
-
-    // Recalculate after mothballing
-    resources[key].delta = computeGlobalDeltasForResource(key);
-
-    // Clamp if still negative
-    if (resources[key].initial + resources[key].delta < 0) {
-      resources[key].delta = -resources[key].initial;
-    }
-  }
-
-  computeFinals();
-}
 
 /**
  * Auto-mothball buildings that consume a specific resource
@@ -144,11 +164,58 @@ function computeGlobalDeltasForResource(key) {
  * Start construction in a city
  */
 export function startConstruction(city, templateName, count = 1) {
-  const existing = city.buildings.find(b => b.template === templateName);
-  if (existing) {
-    existing.beingBuilt = true;
-    existing.count += count;
+  // Look ONLY for identical under-construction stack
+  const existingUC = city.buildings.find(b => b.template === templateName && b.beingBuilt);
+
+  if (existingUC) {
+    existingUC.count += count;
   } else {
-    city.buildings.push({ template: templateName, count, mothballed: false, beingBuilt: true });
+    // Always create a NEW entry for UC
+    city.buildings.push({
+      template: templateName,
+      count,
+      mothballed: false,
+      beingBuilt: true
+    });
   }
+}
+
+function finalizeConstructionForTurn(cities) {
+  cities.forEach(city => {
+    city.buildings.forEach(b => {
+      if (b.beingBuilt) {
+        b.beingBuilt = false;
+        // The count has already been incremented when construction started.
+        // So finalizing simply means “it now contributes next round.”
+      }
+    });
+  });
+}
+
+function mergeCompletedBuildings(city) {
+  const map = new Map();
+
+  city.buildings.forEach(b => {
+    // Only merge buildings that are fully built
+    const key = b.template;
+
+    if (!map.has(key)) {
+      map.set(key, { ...b });
+    } else {
+      const existing = map.get(key);
+
+      // Combine only fully-built parts
+      if (!existing.beingBuilt && !b.beingBuilt) {
+        existing.count += b.count;
+      } else {
+        // If the new one is under construction, keep it separate
+        // by adding a new entry to the map
+        const uniqueKey = key + "_uc_" + Math.random();
+        map.set(uniqueKey, { ...b });
+      }
+    }
+  });
+
+  // Rewrite city.buildings with merged entries
+  city.buildings = [...map.values()];
 }

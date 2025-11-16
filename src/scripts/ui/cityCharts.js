@@ -1,3 +1,5 @@
+//NOTE: per city charts display in devmode only. they were too visually cluttering for the game.
+
 // creates per-city Chart.js stacked bar charts and updates them
 import { buildingMap } from '../campaign/buildings.js';
 import { cities } from '../campaign/cities.js';
