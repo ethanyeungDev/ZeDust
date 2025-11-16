@@ -36,6 +36,15 @@ export function createCityPanel(city, cityIndex) {
   header.innerHTML = `<h3 style="margin:0 0 0.5rem 0;">${city.name}</h3>`;
   panel.appendChild(header);
 
+  // Separate completed vs under-construction and sort
+  const sortedBuildings = [...city.buildings].sort((a, b) => {
+  if (a.template === b.template) {
+    // Completed first, UC after
+    return (a.beingBuilt === b.beingBuilt) ? 0 : (a.beingBuilt ? 1 : -1);
+  }
+  return a.template.localeCompare(b.template);
+});
+
   // Table for buildings + deltas
   const table = document.createElement('table');
   table.style.width = '100%';
@@ -53,7 +62,7 @@ export function createCityPanel(city, cityIndex) {
 
   const tbody = document.createElement('tbody');
 
-  city.buildings.forEach((b) => {
+  sortedBuildings.forEach((b) => {
     const tr = document.createElement('tr');
     tr.style.borderBottom = '1px solid #555';
 
