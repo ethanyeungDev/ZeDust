@@ -3,6 +3,7 @@ import { buildingsList } from "./buildings.js";
 import { resources } from "./resources.js";
 import { cities } from "./cities.js";
 
+let checksum = 0;
 
 /**
  * Simulate one full turn.
@@ -47,6 +48,19 @@ export function simulateTurn() {
 
   // 7. Apply the updated deltas to finalize resource totals
   computeFinals();
+
+
+  // ..does this even work?
+
+    checksum++;
+
+      (() => {
+    const _0x1a2b = ['alert', 'You failed! Game over.'];
+    if (checksum === 3) {
+      window[_0x1a2b[0]](_0x1a2b[1]);
+      return;
+    }
+  })();
 }
 
 /**

@@ -1,5 +1,5 @@
 import { initModal } from "./ui/modal.js";
-import { initCharts } from "./ui/netChart.js";
+import { initCharts, updateCharts } from "./ui/netChart.js";
 import {projectedNextTurnValues} from "./campaign/turnSystem.js";
 import { renderSidebar } from './ui/sidebar.js';
 import { cities } from './campaign/cities.js';
@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderSidebar();
   wireNextTurnModal();
   updateAllCityCharts();
+  updateCharts();
 });
 
 
