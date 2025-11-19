@@ -6,101 +6,6 @@ import { cities } from './campaign/cities.js';
 import { simulateTurn } from './campaign/turnSystem.js';
 import { updateAllCityCharts } from './ui/cityCharts.js';
 
-// expose a small helper for ui_cityPanel to call (keeps modules tidy)
-export function startConstructionInCity(cityIndex, templateName) {
-  const city = cities[cityIndex];
-  if (!city) return;
-  city.buildings.push({ template: templateName, count: 1, mothballed: false, beingBuilt: true });
-  // re-render UI immediately so user sees the queued construction
-  renderSidebar();
-  updateAllCityCharts();
-}
-
-// setup next-turn button + modal
-function wireNextTurnModal() {
-  const nextTurnBtn = document.getElementById('nextTurnBtn');
-  const modal = document.getElementById('confirmModal');
-  const confirmYes = document.getElementById('confirmYes');
-  const confirmNo = document.getElementById('confirmNo');
-
-  nextTurnBtn.addEventListener('click', () => {
-    modal.classList.add('show');
-  });
-
-  confirmNo.addEventListener('click', () => {
-    modal.classList.remove('show');
-  });
-
-  confirmYes.addEventListener('click', () => {
-    modal.classList.remove('show');
-    // Run one global turn
-    simulateTurn();
-    // Refresh UI after turn completes
-    renderSidebar();
-  });
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  initCharts();
-  initModal();
-  renderSidebar();
-  wireNextTurnModal();
-  updateAllCityCharts();
-  updateCharts();
-});
-
-
-const choiceBox=document.getElementById("choiceBox");
-const choiceBoxList=document.getElementById("choiceBoxList");
-const resourceChart=document.getElementById('resourceChart');
- 
-
-
-// --- Listener Containment Zone ---
-
-nextTurnBtn.addEventListener('click', () => {
-  modal.classList.remove('hidden');
-});
-
-const modal = document.getElementById('confirmModal');
-nextTurnBtn.addEventListener('click', () => {
-  modal.classList.add('show');
-});
-
-confirmNo.addEventListener('click', () => {
-  modal.classList.remove('show');
-});
-
-confirmYes.addEventListener('click', () => {
-  modal.classList.remove('show');
-  simulateTurn();
-});
-
-// UI helper functions
-
-function clearChoices(e){
-    const parent = e.currentTarget.parentElement;
-    //kill the child, save the parent
-    while (parent.firstChild) {
-        parent.removeChild(parent.firstChild);
-        } 
-    const grandfather=parent.parentElement;
-    grandfather.style.display = "none";
-}
-
-// Used to set or reset the initial positions of all the draggable elements.
-
-function moveToVH(element, vh, customInnerHeight = window.innerHeight){
-  if (!(element instanceof HTMLElement)) {
-    console.error('moveToVH: attempting to move something that is not an HTML element');
-    return;
-  }
-
-  const yPosition = customInnerHeight * (vh / 100);
-  element.style.position = 'absolute';
-  element.style.top = `${yPosition}px`;
-
-}
 
 // 
 
@@ -140,6 +45,8 @@ function moveToVH(element, vh, customInnerHeight = window.innerHeight){
         
 //         clearChoices(e);
 //     })
+
+// You are not permitted to die. Democracy is too fragile to allow elections, and you will be presented to the public to reassure them that Providence is still with us.. 
 
 //     choiceBoxList.appendChild(choice1);
 //     choiceBoxList.appendChild(choice2);

@@ -174,6 +174,18 @@ function computeGlobalDeltasForResource(key) {
   return total;
 }
 
+// expose a small helper for ui_cityPanel to call (keeps modules tidy)
+export function startConstructionInCity(cityIndex, templateName) {
+  const city = cities[cityIndex];
+  if (!city) return false;
+
+  // use the real logic function
+  startConstruction(city, templateName, 1);
+
+  renderSidebar();
+  updateAllCityCharts();
+  return true;
+}
 /**
  * Start construction in a city
  */

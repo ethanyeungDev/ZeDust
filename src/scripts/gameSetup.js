@@ -1,115 +1,145 @@
-// massive scope creep, cutting hex map for bugs
 
-// import * as hcLib from "../../node_modules/honeycomb-grid/dist/honeycomb-grid.mjs";
-
-// import  { defineHex, Grid, rectangle } from "../../node_modules/honeycomb-grid/dist/honeycomb-grid.mjs";
-
-
-// // 1. Create a hex class:
-// const Tile = defineHex({ dimensions: 30 })
-
-// // 2. Create a grid by passing the class and a "traverser" for a rectangular-shaped grid:
-// const grid = new Grid(Tile, rectangle({ width: 10, height: 10 }))
-
-// // 3. Iterate over the grid to log each hex:
-// grid.forEach(console.log)
 
 // Make the DIV element draggable:
 
+import { initModal } from "./ui/modal.js";
+import { initCharts, updateCharts } from "./ui/netChart.js";
+import {projectedNextTurnValues} from "./campaign/turnSystem.js";
+import { renderSidebar } from './ui/sidebar.js';
+import { cities } from './campaign/cities.js';
+import { simulateTurn } from './campaign/turnSystem.js';
+import { updateAllCityCharts } from './ui/cityCharts.js';
 
-// dragElement(document.getElementById("choiceBox"));
+  document.querySelectorAll('.dragBox').forEach(box => {
+    makeDraggable(box);
+  });
 
-// function dragElement(elmnt) {
-//   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-//   if (document.getElementById(elmnt.id + "Header")) {
-//     // if present, the header is where you move the DIV from:
-//     document.getElementById(elmnt.id + "Header").onmousedown = dragMouseDown;
-//   } else {
-//     // otherwise, move the DIV from anywhere inside the DIV:
-//     elmnt.onmousedown = dragMouseDown;
-//   }
+function makeDraggable(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + "Header")) {
+    // if present, the header is where you move the DIV from:
+    document.getElementById(elmnt.id + "Header").onmousedown = dragMouseDown;
+  } else {
+    // otherwise, move the DIV from anywhere inside the DIV:
+    elmnt.onmousedown = dragMouseDown;
+  }
 
-//   function dragMouseDown(e) {
-//     console.log("drag event is happening")
-//     e = e || window.event;
-//     e.preventDefault();
-//     // get the mouse cursor position at startup:
-//     pos3 = e.clientX;
-//     pos4 = e.clientY;
-//     document.onmouseup = closeDragElement;
-//     // call a function whenever the cursor moves:
-//     document.onmousemove = elementDrag;
-//   }
+  function dragMouseDown(e) {
+    console.log("drag event is happening")
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
 
-//   function elementDrag(e) {
-//     e = e || window.event;
-//     e.preventDefault();
-//     // calculate the new cursor position:
-//     pos1 = pos3 - e.clientX;
-//     pos2 = pos4 - e.clientY;
-//     pos3 = e.clientX;
-//     pos4 = e.clientY;
-//     // set the element's new position:
-//     elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-//     elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-//   }
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
 
-//   function closeDragElement() {
-//     // stop moving when mouse button is released:
-//     document.onmouseup = null;
-//     document.onmousemove = null;
-//   }
-// }
-
+  function closeDragElement() {
+    // stop moving when mouse button is released:
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
 
 
  
+// setup next-turn button + modal
+function wireNextTurnModal() {
+  const nextTurnBtn = document.getElementById('nextTurnBtn');
+  const modal = document.getElementById('confirmModal');
+  const confirmYes = document.getElementById('confirmYes');
+  const confirmNo = document.getElementById('confirmNo');
 
-// // chart setup
-// const xyValues = [
-//   {x:50, y:7},
-//   {x:60, y:8},
-//   {x:70, y:8},
-//   {x:80, y:9},
-//   {x:90, y:9},
-//   {x:100, y:9},
-//   {x:110, y:10},
-//   {x:120, y:11},
-//   {x:130, y:14},
-//   {x:140, y:14},
-//   {x:150, y:15}
-// ];
+  nextTurnBtn.addEventListener('click', () => {
+    modal.classList.add('show');
+  });
 
-// const chart = document.getElementById('resourceChart');
-// chart.classList.add('defaultPos');
+  confirmNo.addEventListener('click', () => {
+    modal.classList.remove('show');
+  });
 
-// new Chart(chart, {
-//   type: "scatter",
-//   data: {
-//     datasets: [{
-//       pointRadius: 4,
-//       pointBackgroundColor: "rgb(0,0,255)",
-//       data: xyValues
-//     }]
-//   },
-//   options: {
-//     responsive: true,
-//     maintainAspectRatio: false, // allows CSS to control the canvas height
-//     plugins: {
-//       legend: { display: false }
-//     },
-//     scales: {
-//       x: {
-//         type: 'linear',
-//         min: 40,
-//         max: 160,
-//         title: { display: true, text: 'X Axis' }
-//       },
-//       y: {
-//         min: 6,
-//         max: 16,
-//         title: { display: true, text: 'Y Axis' }
-//       }
-//     }
-//   }
+  confirmYes.addEventListener('click', () => {
+    modal.classList.remove('show');
+    // Run one global turn
+    simulateTurn();
+    // Refresh UI after turn completes
+    renderSidebar();
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initCharts();
+  initModal();
+  renderSidebar();
+  wireNextTurnModal();
+  updateAllCityCharts();
+  updateCharts();
+});
+
+
+const choiceBox=document.getElementById("choiceBox");
+const choiceBoxList=document.getElementById("choiceBoxList");
+const resourceChart=document.getElementById('resourceChart');
  
+
+
+// --- Listener Containment Zone ---
+
+nextTurnBtn.addEventListener('click', () => {
+  modal.classList.remove('hidden');
+});
+
+const modal = document.getElementById('confirmModal');
+nextTurnBtn.addEventListener('click', () => {
+  modal.classList.add('show');
+});
+
+confirmNo.addEventListener('click', () => {
+  modal.classList.remove('show');
+});
+
+confirmYes.addEventListener('click', () => {
+  modal.classList.remove('show');
+  simulateTurn();
+});
+
+// UI helper functions
+
+function clearChoices(e){
+    const parent = e.currentTarget.parentElement;
+    //kill the child, save the parent
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+        } 
+    const grandfather=parent.parentElement;
+    grandfather.style.display = "none";
+}
+
+// Used to set or reset the initial positions of all the draggable elements.
+
+function moveToVH(element, vh, customInnerHeight = window.innerHeight){
+  if (!(element instanceof HTMLElement)) {
+    console.error('moveToVH: attempting to move something that is not an HTML element');
+    return;
+  }
+
+  const yPosition = customInnerHeight * (vh / 100);
+  element.style.position = 'absolute';
+  element.style.top = `${yPosition}px`;
+
+}

@@ -1,5 +1,5 @@
 import { buildingsList, buildingMap } from '../campaign/buildings.js';
-import { startConstructionInCity } from '../mainGame.js';
+import { startConstructionInCity } from '../campaign/turnSystem.js';
 
 /**
  * Calculate deltas for a single building
