@@ -1,0 +1,20 @@
+name: Mirror to Burner
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Mirror repo
+        run: |
+          git config --global user.email "noreply@users.github.com"
+          git config --global user.name "MirrorBot"
+          git remote add burner https://$BURNER_TOKEN@github.com/MenOfDust/MenOfDust.git
+          git push --force --all burner
+          git push --force --tags burner
