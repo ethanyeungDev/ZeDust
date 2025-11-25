@@ -1,20 +1,31 @@
-name: Mirror to Burner
+name: Mirror to Burner Repo
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master" ]   # this triggers on your correct branch
 
 jobs:
-  sync:
+  mirror:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # needed so we can mirror tags & branches
 
-      - name: Mirror repo
+      - name: Set up SSH for burner deploy key
         run: |
-          git config --global user.email "noreply@users.github.com"
-          git config --global user.name "MirrorBot"
-          git remote add burner https://$BURNER_TOKEN@github.com/MenOfDust/MenOfDust.git
+          mkdir -p ~/.ssh
+          echo "$BURNER_DEPLOY_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Add burner remote
+        run: |
+          git remote add burner git@github.com:MenOfDust/MenOfDust.git
+
+      - name: Mirror to burner
+        run: |
           git push --force --all burner
           git push --force --tags burner
