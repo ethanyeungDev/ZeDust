@@ -19,7 +19,7 @@ jobs:
 
       - name: Add burner remote with PAT
         run: |
-          git remote add burner https://x-access-token:${{ secrets.BURNER_TOKEN}} git@github.com:MenOfDust/MenOfDust.git
+          git remote add burner https://x-access-token:${{ secrets.BURNER_TOKEN}}@github.com/MenOfDust/MenOfDust.git
       - name: Force push all branches
         run: git push --force --all burner
 
