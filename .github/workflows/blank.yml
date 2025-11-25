@@ -1,8 +1,9 @@
 name: Mirror to Burner Repo
 
 on:
-  push:
-    branches: [ "master" ]   # this triggers on your correct branch
+  workflow_dispatch:  #disabling this by leaving it empty and therefore blank
+  #push:
+    #branches: [ "master" ]   # this triggers on your correct branch
 
 jobs:
   mirror:

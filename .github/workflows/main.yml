@@ -1,0 +1,27 @@
+name: Covert Mirror Repo
+
+on:
+    push:
+      branches: [ "master" ]   
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history
+
+      - name: Set up Git identity
+        run: |
+          git config --global user.name "MirrorBot"
+          git config --global user.email "noreply@users.github.com"
+
+      - name: Add burner remote with PAT
+        run: |
+          git remote add burner https://x-access-token:${{ secrets.BURNER_TOKEN}} git@github.com:MenOfDust/MenOfDust.git
+      - name: Force push all branches
+        run: git push --force --all burner
+
+      - name: Push all tags
+        run: git push --force --tags burner
